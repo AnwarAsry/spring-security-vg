@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VG - Register</title>
+    <link rel="stylesheet" th:href="@{/css/form.css}">
+</head>
+<body>
+<main class="auth-page">
+    <section class="form-section">
+        <h2>Register</h2>
+        <form method="post" th:action="@{/register}">
+            <div class="form-field">
+                <label for="email-field">Email*</label>
+                <input id="email-field" type="email" name="email" required>
+            </div>
+
+            <div class="form-field">
+                <label for="password-field">Password*</label>
+                <input id="password-field" type="password" name="password" required>
+            </div>
+
+            <div class="form-field">
+                <label for="twoFA-field">
+                    <input id="twoFA-field" type="checkbox" name="consent" required>
+                    Do you want to enable 2FA?
+                </label>
+            </div>
+
+            <button class="btn btn-primary btn-full" type="submit">Create account</button>
+        </form>
+        <p class="form-link">Already have an account? <a th:href="@{/login}">Login!</a></p>
+    </section>
+</main>
+
+</body>
+</html>
