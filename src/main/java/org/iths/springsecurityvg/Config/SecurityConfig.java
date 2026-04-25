@@ -13,7 +13,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/", "/login", "/register").permitAll()
+                        .requestMatchers("/", "/auth/register").permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/auth/login")
+                        .permitAll()
                 );
         return http.build();
     }
