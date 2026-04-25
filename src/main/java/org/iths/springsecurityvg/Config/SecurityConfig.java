@@ -18,12 +18,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/", "/auth/register").permitAll()
+                        .requestMatchers("/", "/register").permitAll()
                 )
                 .formLogin(form -> form
-                        .loginPage("/auth/login")
+                        .loginPage("/login")
                         .permitAll()
-                );
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login"));
         return http.build();
     }
 
