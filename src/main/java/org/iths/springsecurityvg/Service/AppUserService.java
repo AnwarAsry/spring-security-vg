@@ -12,10 +12,12 @@ import java.util.Optional;
 public class AppUserService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TotpService totpService;
 
-    public AppUserService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
+    public AppUserService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, TotpService totpService) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.totpService = totpService;
     }
 
     public AppUser registerUser(RegisterDTO dto) {
@@ -28,10 +30,9 @@ public class AppUserService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setTwoFactorEnabled(dto.isTwoFactorEnabled());
 
-        // Code to set secret
-//        if (dto.isTwoFactorEnabled()) {
-//            user.setTwoFactorSecret();
-//        }
+        if (dto.isTwoFactorEnabled()) {
+            user.setTwoFactorSecret(totpService.generateTotpSecret());
+        }
 
         return appUserRepository.save(user);
     }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/form.css}">
+</head>
+<body>
+<main>
+    <h1>Verify 2FA</h1>
+    <p>Open your authenticator app and enter the 6-digit code.</p>
+    <form th:action="@{/2fa}" method="post">
+        <p th:if="${error}" th:text="${error}" class="error-msg"></p>
+        <input type="text" name="code" maxlength="6" autocomplete="one-time-code">
+        <button type="submit">Verify</button>
+    </form>
+</main>
+</body>
+</html>

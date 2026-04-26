@@ -30,7 +30,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         if (user.isTwoFactorEnabled()) {
             SecurityContextHolder.clearContext();
             req.getSession().setAttribute("2fa_pending_email", email);
-            res.sendRedirect("/twofa");
+            res.sendRedirect("/2fa");
         } else {
             res.sendRedirect("/");
         }
