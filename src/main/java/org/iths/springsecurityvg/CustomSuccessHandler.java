@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.iths.springsecurityvg.Model.AppUser;
 import org.iths.springsecurityvg.Service.AppUserService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -21,7 +22,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth) throws IOException {
+    public void onAuthenticationSuccess(@NonNull HttpServletRequest req, @NonNull HttpServletResponse res, Authentication auth) throws IOException {
         String email = auth.getName();
 
         AppUser user = appUserService.findUser(email).orElseThrow();
