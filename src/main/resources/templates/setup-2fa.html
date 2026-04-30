@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Qr Code</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<main>
+    <h1>Set up authenticator</h1>
+    <div class="setup-2fa">
+        <p>Scan this QR code with Microsoft Authenticator.</p>
+        <img th:src="${qrCode}" alt="QR Code">
+        <p>After scanning, log in and enter the code from the app.</p>
+        <a th:href="@{/login}">Go to login</a>
+    </div>
+</main>
+</body>
+</html>
