@@ -7,6 +7,7 @@ import org.iths.springsecurityvg.Model.AppUser;
 import org.iths.springsecurityvg.Service.AppUserService;
 import org.iths.springsecurityvg.Service.TotpService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -17,15 +18,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/2fa")
 public class TwoFactorController {
     private final AppUserService appUserService;
     private final TotpService totpService;
+    private final HttpSessionSecurityContextRepository securityContextRepository;
 
-    public TwoFactorController(AppUserService appUserService, TotpService totpService) {
+    public TwoFactorController(AppUserService appUserService, TotpService totpService, HttpSessionSecurityContextRepository securityContextRepository) {
         this.appUserService = appUserService;
         this.totpService = totpService;
+        this.securityContextRepository = securityContextRepository;
     }
 
     @GetMapping
@@ -45,17 +50,23 @@ public class TwoFactorController {
         AppUser user = appUserService.findUser(email).orElse(null);
         if (user == null) return "redirect:/login";
 
-        if (totpService.verifyCode(user.getTwoFactorSecret(), code)) {
+        if (!totpService.verifyCode(user.getTwoFactorSecret(), code)) {
             model.addAttribute("error", "Invalid code, try again");
             return "verify-2fa";
         }
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                user.getEmail(),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+        );
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(auth);
         SecurityContextHolder.setContext(context);
-        new HttpSessionSecurityContextRepository().saveContext(context, req, res);
+
+        securityContextRepository.saveContext(context, req, res);
+
         session.removeAttribute("2fa_pending_email");
 
         return "redirect:/";

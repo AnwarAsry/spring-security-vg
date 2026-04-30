@@ -20,6 +20,8 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    private String role = "USER";
+
     private boolean twoFactorEnabled = false;
 
     private String twoFactorSecret;
