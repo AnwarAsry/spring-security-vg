@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>VG - You have access!</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<main>
+    <h1 sec:authorize="isAuthenticated()">You are loged in!</h1>
+    <div class="actions-container">
+        <th:block sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Log Out</button>
+            </form>
+        </th:block>
+    </div>
+</main>
+</body>
+</html>

@@ -24,6 +24,11 @@ public class AuthController {
         this.totpService = totpService;
     }
 
+    @GetMapping("/access")
+    public String accessPage() {
+        return "access";
+    }
+
     @GetMapping("/login")
     public String showLoginPage() {
         return "login";

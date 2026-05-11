@@ -9,13 +9,7 @@
 <body>
 <main>
     <h1 sec:authorize="isAnonymous()">Welcome</h1>
-    <h1 sec:authorize="isAuthenticated()">You are loged in!</h1>
     <div class="actions-container">
-        <th:block sec:authorize="isAuthenticated()">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-danger">Log Out</button>
-            </form>
-        </th:block>
         <th:block sec:authorize="isAnonymous()">
             <a class="btn btn-primary" th:href="@{/login}">Login</a>
             <a class="btn btn-secondary" th:href="@{/register}">Register</a>

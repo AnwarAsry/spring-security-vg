@@ -2,11 +2,11 @@ package org.iths.springsecurityvg.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.iths.springsecurityvg.Model.AppUser;
 import org.iths.springsecurityvg.Service.AppUserService;
 import org.iths.springsecurityvg.Service.TotpService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,12 +40,17 @@ public class TwoFactorController {
 
     @PostMapping
     public String verifyTwoFactor(@RequestParam String code,
-                                  HttpSession session,
                                   HttpServletRequest req,
                                   HttpServletResponse res,
                                   Model model) {
-        String email = (String) session.getAttribute("2fa_pending_email");
-        if (email == null) return "redirect:/login";
+        Authentication preAuth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (preAuth == null || !(preAuth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_PRE_AUTH")))) {
+            return "redirect:/login";
+        }
+
+        String email = (String) preAuth.getPrincipal();
 
         AppUser user = appUserService.findUser(email).orElse(null);
         if (user == null) return "redirect:/login";
@@ -55,20 +60,18 @@ public class TwoFactorController {
             return "verify-2fa";
         }
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+        UsernamePasswordAuthenticationToken fullAuth = new UsernamePasswordAuthenticationToken(
                 user.getEmail(),
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(auth);
+        context.setAuthentication(fullAuth);
         SecurityContextHolder.setContext(context);
 
         securityContextRepository.saveContext(context, req, res);
 
-        session.removeAttribute("2fa_pending_email");
-
-        return "redirect:/";
+        return "redirect:/access";
     }
 }

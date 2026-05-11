@@ -1,6 +1,6 @@
 package org.iths.springsecurityvg.Config;
 
-import org.iths.springsecurityvg.CustomSuccessHandler;
+import org.iths.springsecurityvg.Component.CustomSuccessHandler;
 import org.iths.springsecurityvg.Service.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +21,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/", "/register").permitAll()
-                        .requestMatchers("/2fa").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/2fa").hasAuthority("ROLE_PRE_AUTH")
+                        .anyRequest().hasAnyRole("USER")
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
